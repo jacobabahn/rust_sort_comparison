@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::time::Instant;
 
 fn insertion_sort(vec: &mut Vec<i32>) {
     for i in 1..vec.len() {
@@ -10,9 +11,9 @@ fn insertion_sort(vec: &mut Vec<i32>) {
     }
 }
 
-fn check_sort(vec: Vec<i32>) -> bool {
-    for i in 1..vec.len() {
-        if vec[i] < vec[i + 1] {
+fn check_sort(vec: &Vec<i32>) -> bool {
+    for i in 1..vec.len() - 1 {
+        if vec[i] > vec[i + 1] {
             return false;
         }
     }
@@ -23,21 +24,35 @@ fn main() {
     let mut vec: Vec<i32> = Vec::new();
     // let mut vec_merge: Vec<i32> = Vec::new();
 
-    print!("Enter a number of items for the insertion_sort. ");
-    let mut line = String::new();
-    let insertion_sort_size = std::io::stdin().read_line(&mut line).unwrap();
-    println!("{}", insertion_sort_size);
+    println!("Enter a number of items for the insertion_sort. ");
 
-    // line = String::new();
-    // print!("Enter a number of items for the merge_sort. ");
-    // let merge_sort_size = std::io::stdin().read_line(&mut line).unwrap();
+    let mut input_line = String::new();
+    std::io::stdin()
+        .read_line(&mut input_line)
+        .expect("Failed to read line");
+    let insertion_sort_size: i32 = input_line.trim().parse().expect("Input not an integer");
+
+    // let mut input_line = String::new();
+    // std::io::stdin()
+    //     .read_line(&mut input_line)
+    //     .expect("Failed to read line");
+    // let merge_sort_size: i32 = input_line.trim().parse().expect("Input not an integer");
 
     let mut rng = rand::thread_rng();
-    for i in 1..insertion_sort_size {
+    for _ in 1..insertion_sort_size {
         vec.push(rng.gen_range(0, 100));
     }
 
-    println!("{:?}", vec);
-
+    let now = Instant::now();
     insertion_sort(&mut vec);
+    let elapsed_insertion = now.elapsed().as_millis();
+
+    println!(
+        "It took Insertion Sort {} milliseconds to sort the vector.",
+        elapsed_insertion
+    );
+
+    if !check_sort(&vec) {
+        println!("Sorting didn't work correctly.")
+    }
 }
